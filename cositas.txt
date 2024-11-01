@@ -1,2 +1,3 @@
 codigo api: 1e2d6c96cba04ad3a24dc520531c3f7c
 Ejemplo: https://api.spoonacular.com/recipes/complexSearch?apiKey=1e2d6c96cba04ad3a24dc520531c3f7c
+https://api.spoonacular.com/recipes/{id}/information?apiKey=1e2d6c96cba04ad3a24dc520531c3f7c&includeNutrition=false

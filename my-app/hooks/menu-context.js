@@ -1,17 +1,17 @@
+// menu-context.js
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 export const MenuContext = createContext();
 
 export const MenuProvider = ({ children }) => {
-  const [menu, setMenu] = useState([]); // Información de los platos en el menú
-  const [selectedIds, setSelectedIds] = useState([]); // Array de IDs de platos seleccionados
+  const [menu, setMenu] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [averageHealthScore, setAverageHealthScore] = useState(0);
 
   const API_KEY = '1e2d6c96cba04ad3a24dc520531c3f7c';
 
-  // Función para actualizar los datos del menú cada vez que cambia `selectedIds`
   useEffect(() => {
     const fetchMenuData = async () => {
       try {
@@ -26,11 +26,8 @@ export const MenuProvider = ({ children }) => {
           })
         );
 
-        // Hacer todas las solicitudes en paralelo y actualizar el menú con la data obtenida
         const responses = await Promise.all(requests);
         const newMenu = responses.map(response => response.data);
-
-        // Actualizar el estado del menú con la información obtenida de cada receta
         setMenu(newMenu);
       } catch (error) {
         console.error("Error al obtener los datos de las recetas:", error);
@@ -44,7 +41,6 @@ export const MenuProvider = ({ children }) => {
     }
   }, [selectedIds]);
 
-  // Actualizar el precio total y el promedio de HealthScore cada vez que cambia el menú
   useEffect(() => {
     const newTotalPrice = menu.reduce(
       (acc, plato) => acc + plato.pricePerServing * plato.servings,
@@ -58,7 +54,6 @@ export const MenuProvider = ({ children }) => {
     setAverageHealthScore(newAverageHealthScore);
   }, [menu]);
 
-  // Función para agregar o eliminar un ID de la lista de IDs seleccionados
   const toggleSelectedId = (id) => {
     setSelectedIds(prevSelectedIds =>
       prevSelectedIds.includes(id)
@@ -67,13 +62,24 @@ export const MenuProvider = ({ children }) => {
     );
   };
 
+  // Función para agregar un plato al menú
+  const addPlato = (plato) => {
+    setMenu(prevMenu => [...prevMenu, plato]);
+  };
+
+  const removePlato = (id) => {
+    setMenu(prevMenu => prevMenu.filter(plato => plato.id !== id));
+  };
+
   return (
     <MenuContext.Provider value={{
       menu,
       selectedIds,
       totalPrice,
       averageHealthScore,
-      toggleSelectedId
+      toggleSelectedId,
+      addPlato,
+      removePlato
     }}>
       {children}
     </MenuContext.Provider>

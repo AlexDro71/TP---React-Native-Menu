@@ -4,32 +4,28 @@ import { MenuContext } from '../hooks/menu-context';
 
 const Plato = ({ plato }) => {
   const { menu, addPlato, removePlato } = useContext(MenuContext) || {};
-  const menuContext = useContext(MenuContext);
-  console.log(menuContext);
 
- 
-
+  // Verificar si el plato ya está en el menú
   const isInMenu = menu ? menu.some(item => item.id === plato.id) : false;
-
-  const handleAddToMenu = () => {
-    addPlato(plato);
-  };
 
   return (
     <View style={styles.container}>
+      {/* Imagen y título del plato */}
       <Text style={styles.title}>{plato.title}</Text>
       <View style={styles.imageContainer}>
         <Image source={{ uri: plato.image }} style={styles.image} />
       </View>
-
+      
+      {/* Botones de acción */}
       <View style={styles.actions}>
-        {isInMenu ? (
+        {/* Mostrar botón "Agregar" si el plato no está en el menú */}
+        {!isInMenu ? (
+          <Button title="Agregar receta" onPress={() => addPlato && addPlato(plato)} />
+        ) : (
           <>
             <Button title="Ver Detalles" onPress={() => { /* Acción futura de ver detalles */ }} />
             <Button title="Eliminar" color="red" onPress={() => removePlato && removePlato(plato.id)} />
           </>
-        ) : (
-          <Button title="Agregar Receta" color="green" onPress={handleAddToMenu} />
         )}
       </View>
     </View>
@@ -40,7 +36,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    width: 325,  // Ajustar el padding para mejor presentación
+    width: 325,
     marginVertical: 12,
     backgroundColor: '#f9f9f9',
     borderRadius: 12,
@@ -51,12 +47,12 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   imageContainer: {
-    alignItems: 'center',  // Centrar la imagen horizontalmente
-    marginBottom: 10,  // Espacio entre la imagen y el título
+    alignItems: 'center',
+    marginBottom: 10,
   },
   image: {
-    width: 300,  // Asegúrate de que la imagen ocupe el 100% del contenedor
-    height: 200,    // Ajusta la altura según sea necesario
+    width: 300,
+    height: 200,
     borderRadius: 12,
   },
   title: {

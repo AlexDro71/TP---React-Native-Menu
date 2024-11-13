@@ -1,11 +1,15 @@
+import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
+import { MenuProvider } from '../../hooks/menu-context';  // Ajusta la ruta de importación
+import HomeScreen from './HomeScreen';
 
-export default function HomeScreen() {
+export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>¡Bienvenido a la Home Screen!</Text>
-      <Text style={styles.description}>Esta es una pantalla de inicio en React Native.</Text>
-    </View>
+    <MenuProvider>
+      <View style={styles.container}>
+        <HomeScreen />
+      </View>
+    </MenuProvider>
   );
 }
 
@@ -16,21 +20,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     backgroundColor: '#f0f8ff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#333',
-  },
-  description: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  reactLogo: {
-    height: 80,
-    width: 80,
   },
 });

@@ -9,7 +9,7 @@ export const MenuProvider = ({ children }) => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [averageHealthScore, setAverageHealthScore] = useState(0);
 
-  const API_KEY = '1e2d6c96cba04ad3a24dc520531c3f7c';
+  const API_KEY = '84bfa556615c41f1b97139d65459c333';
 
   useEffect(() => {
     const fetchMenuData = async () => {
@@ -23,9 +23,8 @@ export const MenuProvider = ({ children }) => {
               addTasteData: false,
             },
           })
-
         );
-        
+
         const responses = await Promise.all(requests);
         const newMenu = responses.map(response => response.data);
         setMenu(newMenu);
@@ -37,49 +36,47 @@ export const MenuProvider = ({ children }) => {
     if (selectedIds.length > 0) {
       fetchMenuData();
     } else {
-      setMenu([]);
+      setMenu([]); // Si no hay selectedIds, vacía el menú
     }
-  }, [selectedIds]);
+  }, [selectedIds]); // Dependemos de selectedIds, no de menu para evitar el bucle infinito
 
   useEffect(() => {
     const newTotalPrice = menu.reduce(
-      (acc, plato) => acc + plato.pricePerServing * plato.servings,
+      (acc, plato) => {
+        const pricePerServing = plato.pricePerServing || 0;
+        const servings = plato.servings || 0;
+        return acc + pricePerServing * servings;
+      },
       0
     );
-    const newAverageHealthScore = menu.length
-      ? menu.reduce((acc, plato) => acc + plato.healthScore, 0) / menu.length
-      : 0;
+
+    const newAverageHealthScore = menu.length ? menu.reduce((acc, plato) => acc + (plato.healthScore || 0), 0) / menu.length : 0;
 
     setTotalPrice(newTotalPrice);
     setAverageHealthScore(newAverageHealthScore);
   }, [menu]);
 
-  const toggleSelectedId = (id) => {
-    setSelectedIds(prevSelectedIds =>
-      prevSelectedIds.includes(id)
-        ? prevSelectedIds.filter(existingId => existingId !== id)
-        : [...prevSelectedIds, id]
-    );
-  };
-
   const addPlato = (plato) => {
-    setMenu(prevMenu => [...prevMenu, plato]);
+    setMenu((prevMenu) => [...prevMenu, plato]);
+    setSelectedIds((prevIds) => [...prevIds, plato.id]); // Añadir el id del plato a selectedIds
   };
 
   const removePlato = (id) => {
-    setMenu(prevMenu => prevMenu.filter(plato => plato.id !== id));
+    setMenu((prevMenu) => prevMenu.filter((plato) => plato.id !== id));
+    setSelectedIds((prevIds) => prevIds.filter((idItem) => idItem !== id)); // Eliminar el id de selectedIds
   };
-  console.log("test",menu,averageHealthScore,totalPrice)
+
   return (
-    <MenuContext.Provider value={{
-      menu,
-      selectedIds,
-      totalPrice,
-      averageHealthScore,
-      toggleSelectedId,
-      addPlato,
-      removePlato
-    }}>
+    <MenuContext.Provider
+      value={{
+        menu,
+        selectedIds,
+        totalPrice,
+        averageHealthScore,
+        addPlato,
+        removePlato,
+      }}
+    >
       {children}
     </MenuContext.Provider>
   );

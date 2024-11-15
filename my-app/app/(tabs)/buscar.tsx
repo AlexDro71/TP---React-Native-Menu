@@ -19,7 +19,7 @@
       
       try {
         const response = await axios.get(
-          `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=1e2d6c96cba04ad3a24dc520531c3f7c`
+          `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=84bfa556615c41f1b97139d65459c333`
         );
         console.log(response.data);
         setResult(response.data.results);
@@ -74,7 +74,8 @@
     boton: {
       color: 'white',
       textDecorationColor: 'white',
-      backgroundColor: 'blue',
+      backgroundColor: 'lime',
+      borderRadius: 10
     },
     input: {
       height: 40,

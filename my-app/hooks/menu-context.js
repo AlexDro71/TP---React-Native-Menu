@@ -1,4 +1,3 @@
-// menu-context.js
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -24,8 +23,9 @@ export const MenuProvider = ({ children }) => {
               addTasteData: false,
             },
           })
-        );
 
+        );
+        
         const responses = await Promise.all(requests);
         const newMenu = responses.map(response => response.data);
         setMenu(newMenu);
@@ -62,7 +62,6 @@ export const MenuProvider = ({ children }) => {
     );
   };
 
-  // Función para agregar un plato al menú
   const addPlato = (plato) => {
     setMenu(prevMenu => [...prevMenu, plato]);
   };
@@ -70,7 +69,7 @@ export const MenuProvider = ({ children }) => {
   const removePlato = (id) => {
     setMenu(prevMenu => prevMenu.filter(plato => plato.id !== id));
   };
-
+  console.log("test",menu,averageHealthScore,totalPrice)
   return (
     <MenuContext.Provider value={{
       menu,

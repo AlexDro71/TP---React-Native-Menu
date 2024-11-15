@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
 import { View, Text, Image, Button, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { MenuContext } from '../hooks/menu-context';
 
 const Plato = ({ plato }) => {
+  const navigation = useNavigation();
   const { menu, addPlato, removePlato } = useContext(MenuContext) || {};
 
   // Verificar si el plato ya está en el menú
@@ -10,20 +12,20 @@ const Plato = ({ plato }) => {
 
   return (
     <View style={styles.container}>
-      {/* Imagen y título del plato */}
       <Text style={styles.title}>{plato.title}</Text>
       <View style={styles.imageContainer}>
         <Image source={{ uri: plato.image }} style={styles.image} />
       </View>
-      
-      {/* Botones de acción */}
+
       <View style={styles.actions}>
-        {/* Mostrar botón "Agregar" si el plato no está en el menú */}
         {!isInMenu ? (
           <Button title="Agregar receta" onPress={() => addPlato && addPlato(plato)} />
         ) : (
           <>
-            <Button title="Ver Detalles" onPress={() => { /* Acción futura de ver detalles */ }} />
+            <Button
+              title="Ver Detalles"
+              onPress={() => navigation.navigate('Detalles', { plato })}
+            />
             <Button title="Eliminar" color="red" onPress={() => removePlato && removePlato(plato.id)} />
           </>
         )}

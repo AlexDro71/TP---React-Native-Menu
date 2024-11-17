@@ -10,7 +10,7 @@ export const MenuProvider = ({ children }) => {
   const [averageHealthScore, setAverageHealthScore] = useState(0);
   const [veganCount, setVeganCount] = useState(0); // Contador de platos veganos
 
-  const API_KEY = "84bfa556615c41f1b97139d65459c333";
+  const API_KEY = "9fdf83b34ae64971be5e7263b9f72cbf";
 
   useEffect(() => {
     const fetchMenuData = async () => {

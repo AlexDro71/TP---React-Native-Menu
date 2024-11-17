@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Keyboard, FlatList, Pressable } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Keyboard, FlatList, Pressable,TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import Plato from '../../components/plato';
 import { MenuContext } from '../../hooks/menu-context';
@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 
 interface Recipe {
   id: number;
+  nombre: string;
   title: string;
   image: string;
   healthScore: number;
@@ -28,7 +29,7 @@ export default function TabTwoScreen() {
     Keyboard.dismiss();
     try {
       const response = await axios.get(
-        `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=84bfa556615c41f1b97139d65459c333`
+        `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=9fdf83b34ae64971be5e7263b9f72cbf`
       );
       console.log(response.data);
       setResult(response.data.results);
@@ -68,38 +69,45 @@ export default function TabTwoScreen() {
   {result.length > 0 ? (
     result.map((item) => (
       <FlatList
-      data={result}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <View>
-          <Plato plato={item} />
-          <View style={styles.actions}>
-            {!menu.some((plato: Recipe) => plato.id === item.id) ? (
-              <Button title="Agregar receta" onPress={() => addPlato && addPlato(item)} />
-            ) : (
-              <Button title="Eliminar" color="red" onPress={() => removePlato && removePlato(item.id)} />
-            )}
-            <Button
-              title="Ver Detalles"
-              onPress={() => handleOpenModal(item)}
-            />
-          </View>
-    
-          {/* Render the modal for the current item if it's selected */}
-         
-            <PlatoDetalle
-              visible={modalVisible}
-              id={item.id}
-              onClose={handleCloseModal}
-              onAddToMenu={addPlato(item)}
-              onRemoveFromMenu={removePlato(item.id)}
-              menu={menu}
-            />
-         
-        </View>
+  data={result}
+  keyExtractor={(item) => item.id.toString()} // Ensure item.id is unique and exists
+  renderItem={({ item }) => (
+    <View key={item.id.toString()}> {/* Optional: key on the parent View */}
+      <Plato plato={item} />
+
+      <View style={styles.actions}>
+        {!menu.some((plato: Recipe) => plato.id === item.id) ? (
+          <TouchableOpacity onPress={() => addPlato && addPlato(item)} style={styles.button}>
+          <Text style={styles.buttonText}>Agregar receta</Text>
+        </TouchableOpacity>
+        
+        ) : (
+          <TouchableOpacity onPress={() => removePlato && removePlato(item.id)} style={[styles.button, styles.removeButton]}>
+                <Text style={styles.buttonText}>Eliminar</Text>
+              </TouchableOpacity>
+        )}
+        <TouchableOpacity onPress={() => handleOpenModal(item)} style={styles.button}>
+              <Text style={styles.buttonText}>Ver Detalles</Text>
+            </TouchableOpacity>
+      </View>
+
+      {modalVisible && selectedPlato?.id === item.id && (
+        <PlatoDetalle
+          visible={modalVisible}
+          id={selectedPlato.id}
+          onClose={handleCloseModal}
+          onAddToMenu={(plato: Recipe) => addPlato && addPlato(plato)}
+          onRemoveFromMenu={(platoId: number) => removePlato && removePlato(platoId)}
+          menu={menu}
+        />
       )}
-      ListEmptyComponent={<Text style={styles.noResults}>No se encontraron resultados.</Text>}
-    />
+    </View>
+  )}
+  ListEmptyComponent={<Text style={styles.noResults}>No se encontraron resultados.</Text>}
+/>
+
+
+    
     ))
   ) : (
     <Text style={styles.noResults}>No se encontraron resultados.</Text>
@@ -113,9 +121,41 @@ export default function TabTwoScreen() {
 }
 
 const styles = StyleSheet.create({
+  cardContainer: {
+    marginBottom: 10, // Space between cards
+    padding: 10, // Inner padding for card content
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    elevation: 3, // For Android shadow
+  },
+  button: {
+    backgroundColor: '#007BFF',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  removeButton: {
+    backgroundColor: 'red',
+  },
+  actions: {
+    flexDirection: 'row', // Align buttons in a row
+    justifyContent: 'space-between', // Space between buttons
+    marginTop: 10, // Space between content and buttons
+  },
   container: {
     flex: 1,
     padding: 16,
+    height: 400,
     backgroundColor: 'white',
   },
   content: {
@@ -140,10 +180,5 @@ const styles = StyleSheet.create({
     marginTop: 16,
     textAlign: 'center',
     color: 'gray',
-  },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 10,
   },
 });

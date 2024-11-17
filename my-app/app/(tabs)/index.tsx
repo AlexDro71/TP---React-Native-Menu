@@ -14,16 +14,16 @@ interface Plato {
 export default function HomeScreen() {
   const { menu, totalPrice, averageHealthScore, addPlato, removePlato } = useContext(MenuContext);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedPlato, setSelectedPlato] = useState<Plato | null>(null);
+  const [selectedPlatoId, setSelectedPlatoId] = useState<number | null>(null);
 
-  const handleOpenModal = (item: Plato) => {
-    setSelectedPlato(item);
+  const handleOpenModal = (id: number) => {
+    setSelectedPlatoId(id);
     setModalVisible(true);
   };
 
   const handleCloseModal = () => {
     setModalVisible(false);
-    setSelectedPlato(null);
+    setSelectedPlatoId(null);
   };
 
   const handleAddToMenu = (item: Plato) => {
@@ -52,15 +52,16 @@ export default function HomeScreen() {
               <Text style={styles.platoTitle}>{item.title}</Text>
               <Image source={{ uri: item.image }} style={styles.image} />
               <View style={styles.buttonContainer}>
+                
+                <Button
+                  title="Ver Detalle"
+                  color="blue"
+                  onPress={() => handleOpenModal(item.id)}
+                />
                 <Button
                   title="Eliminar"
                   color="red"
                   onPress={() => handleRemoveFromMenu(item.id)}
-                />
-                <Button
-                  title="Ver Detalle"
-                  color="blue"
-                  onPress={() => handleOpenModal(item)}
                 />
               </View>
             </View>
@@ -70,10 +71,10 @@ export default function HomeScreen() {
         <Text style={styles.noItemsText}>No hay platos en el menú.</Text>
       )}
 
-      {modalVisible && selectedPlato && (
+      {modalVisible && selectedPlatoId !== null && (
         <PlatoDetalle
           visible={modalVisible}
-          plato={selectedPlato}
+          id={selectedPlatoId}
           onClose={handleCloseModal}
           onAddToMenu={handleAddToMenu}
           onRemoveFromMenu={handleRemoveFromMenu}

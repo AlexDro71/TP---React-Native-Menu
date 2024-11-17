@@ -1,7 +1,65 @@
-import React from 'react';
-import { View, Text, Button, Image, StyleSheet, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, Image, StyleSheet, Modal, ActivityIndicator } from 'react-native';
+import axios from 'axios';
 
-const PlatoDetalle = ({ visible, onClose, plato, onAddToMenu, onRemoveFromMenu, menu }) => {
+const API_KEY = '84bfa556615c41f1b97139d65459c333'; // Asegúrate de reemplazar esto con tu API Key
+
+const PlatoDetalle = ({ visible, onClose, id, onAddToMenu, onRemoveFromMenu, menu }) => {
+  const [plato, setPlato] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (visible && id) {
+      setLoading(true);
+      axios.get(`https://api.spoonacular.com/recipes/${id}/information`, {
+        params: {
+          apiKey: API_KEY,
+          includeNutrition: false,
+          addWinePairing: false,
+          addTasteData: false,
+        },
+      })
+      .then((response) => {
+        setPlato(response.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError('Error al cargar los datos del plato');
+        setLoading(false);
+      });
+    }
+  }, [visible, id]);
+
+  if (!visible) return null;
+
+  if (loading) {
+    return (
+      <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <ActivityIndicator size="large" color="#0000ff" />
+            <Text>Cargando...</Text>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
+
+  if (error) {
+    return (
+      <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalText}>{error}</Text>
+            <Button title="Cerrar" onPress={onClose} />
+          </View>
+        </View>
+      </Modal>
+    );
+  }
+
   if (!plato) return null;
 
   const isInMenu = menu?.some((item) => item.id === plato.id) || false;

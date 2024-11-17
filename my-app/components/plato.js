@@ -4,31 +4,15 @@ import { useNavigation } from '@react-navigation/native';
 import { MenuContext } from '../hooks/menu-context';
 
 const Plato = ({ plato }) => {
-  const navigation = useNavigation();
-  const { menu, addPlato, removePlato } = useContext(MenuContext) || {};
 
   // Verificar si el plato ya está en el menú
-  const isInMenu = menu ? menu.some(item => item.id === plato.id) : false;
+  
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{plato.title}</Text>
       <View style={styles.imageContainer}>
         <Image source={{ uri: plato.image }} style={styles.image} />
-      </View>
-
-      <View style={styles.actions}>
-        {!isInMenu ? (
-          <Button title="Agregar receta" onPress={() => addPlato && addPlato(plato)} />
-        ) : (
-          <>
-            <Button
-              title="Ver Detalles"
-              onPress={() => navigation.navigate('Detalles', { plato })}
-            />
-            <Button title="Eliminar" color="red" onPress={() => removePlato && removePlato(plato.id)} />
-          </>
-        )}
       </View>
     </View>
   );
@@ -63,11 +47,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     textAlign: 'center',
   },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 15,
-  },
+  
 });
 
 export default Plato;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Image, StyleSheet, Modal, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 
-const API_KEY = '9fdf83b34ae64971be5e7263b9f72cbf'; // Asegúrate de reemplazar esto con tu API Key
+const API_KEY = '3c980922330a4e258cf12abcb9af3d1e'; // Asegúrate de reemplazar esto con tu API Key
 
 const PlatoDetalle = ({ visible, onClose, id, onAddToMenu, onRemoveFromMenu, menu }) => {
   const [plato, setPlato] = useState(null);

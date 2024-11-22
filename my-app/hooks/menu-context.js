@@ -8,8 +8,18 @@ export const MenuProvider = ({ children }) => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [averageHealthScore, setAverageHealthScore] = useState(0);
+  let vegan = 0;
+  let nonVegan = 0;
+  menu.map(plato => {
+    if (plato.vegan === true) { // Usar comparación estricta
+    vegan++;
+  } else if (plato.vegan === false) { // Usar comparación estricta
+    nonVegan++;
+  }
+  });
 
-  const API_KEY = "9fdf83b34ae64971be5e7263b9f72cbf";
+
+  const API_KEY = "3c980922330a4e258cf12abcb9af3d1e";
 
   useEffect(() => {
     const fetchMenuData = async () => {
@@ -27,7 +37,7 @@ export const MenuProvider = ({ children }) => {
 
         const responses = await Promise.all(requests);
         const newMenu = responses.map((response) => response.data);
-
+        
         setMenu(newMenu);
       } catch (error) {
         console.error("Error al obtener los datos de las recetas:", error);
@@ -58,11 +68,23 @@ export const MenuProvider = ({ children }) => {
   }, [menu]);
 
   const addPlato = (plato) => {
+
+    console.log("v count", vegan)
+    console.log("nv count", nonVegan)
     if (menu.length >= 4) {
       console.warn("No puedes agregar más de 4 platos.");
       return;
     }
-
+    if(vegan >= 2 ){
+      
+      console.warn("Se supero el maximo de platos veganos")
+      return;
+    }
+    if(nonVegan >= 2 ){
+      console.warn("Se supero el maximo de platos no veganos")
+      return;
+    }
+   
     setMenu((prevMenu) => [...prevMenu, plato]);
     setSelectedIds((prevIds) => [...prevIds, plato.id]);
   };

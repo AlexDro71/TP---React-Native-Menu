@@ -29,9 +29,8 @@ export default function TabTwoScreen() {
     Keyboard.dismiss();
     try {
       const response = await axios.get(
-        `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=9fdf83b34ae64971be5e7263b9f72cbf`
+        `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=3c980922330a4e258cf12abcb9af3d1e&addRecipeInformation=true`
       );
-      console.log(response.data);
       setResult(response.data.results);
     } catch (error) {
       console.error("Error en la búsqueda:", error);

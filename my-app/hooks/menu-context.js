@@ -8,7 +8,6 @@ export const MenuProvider = ({ children }) => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [averageHealthScore, setAverageHealthScore] = useState(0);
-  const [veganCount, setVeganCount] = useState(0); // Contador de platos veganos
 
   const API_KEY = "9fdf83b34ae64971be5e7263b9f72cbf";
 
@@ -29,11 +28,7 @@ export const MenuProvider = ({ children }) => {
         const responses = await Promise.all(requests);
         const newMenu = responses.map((response) => response.data);
 
-        // Contar la cantidad de platos veganos en el nuevo menú
-        const newVeganCount = newMenu.filter((plato) => plato.vegan).length;
-
         setMenu(newMenu);
-        setVeganCount(newVeganCount); // Actualizar el conteo vegano
       } catch (error) {
         console.error("Error al obtener los datos de las recetas:", error);
       }
@@ -43,7 +38,6 @@ export const MenuProvider = ({ children }) => {
       fetchMenuData();
     } else {
       setMenu([]); // Si no hay selectedIds, vacía el menú
-      setVeganCount(0); // Reiniciar el contador vegano
     }
   }, [selectedIds]);
 
@@ -55,7 +49,8 @@ export const MenuProvider = ({ children }) => {
     }, 0);
 
     const newAverageHealthScore = menu.length
-      ? menu.reduce((acc, plato) => acc + (plato.healthScore || 0), 0) / menu.length
+      ? menu.reduce((acc, plato) => acc + (plato.healthScore || 0), 0) /
+        menu.length
       : 0;
 
     setTotalPrice(newTotalPrice);
@@ -68,21 +63,8 @@ export const MenuProvider = ({ children }) => {
       return;
     }
 
-    if (plato.vegan && veganCount >= 2) {
-      console.warn("Ya tienes el límite de 2 platos veganos.");
-      return;
-    }
-
-    if (!plato.vegan && menu.length - veganCount >= 2) {
-      console.warn("Ya tienes el límite de 2 platos no veganos.");
-      return;
-    }
-
     setMenu((prevMenu) => [...prevMenu, plato]);
     setSelectedIds((prevIds) => [...prevIds, plato.id]);
-    if (plato.vegan) {
-      setVeganCount((prevVeganCount) => prevVeganCount + 1);
-    }
   };
 
   const removePlato = (id) => {
@@ -91,9 +73,6 @@ export const MenuProvider = ({ children }) => {
     if (platoToRemove) {
       setMenu((prevMenu) => prevMenu.filter((plato) => plato.id !== id));
       setSelectedIds((prevIds) => prevIds.filter((idItem) => idItem !== id));
-      if (platoToRemove.vegan) {
-        setVeganCount((prevVeganCount) => prevVeganCount - 1);
-      }
     }
   };
 

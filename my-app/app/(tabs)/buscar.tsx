@@ -64,34 +64,39 @@ export default function TabTwoScreen() {
         </View>
       </Pressable>
 
-      <View style={styles.content}>
-   
-  {result.length > 0 ? (
-    result.map((item) => (
       <FlatList
-  data={result}
-  keyExtractor={(item) => item.id.toString()} // Ensure item.id is unique and exists
-  renderItem={({ item }) => (
-    <View key={item.id.toString()}> {/* Optional: key on the parent View */}
-      <Plato plato={item} />
-
-      <View style={styles.actions}>
-        {!menu.some((plato: Recipe) => plato.id === item.id) ? (
-          <TouchableOpacity onPress={() => addPlato && addPlato(item)} style={styles.button}>
-          <Text style={styles.buttonText}>Agregar receta</Text>
-        </TouchableOpacity>
-        
-        ) : (
-          <TouchableOpacity onPress={() => removePlato && removePlato(item.id)} style={[styles.button, styles.removeButton]}>
-                <Text style={styles.buttonText}>Eliminar</Text>
+        data={result}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.cardContainer}>
+            <Plato plato={item} />
+            <View style={styles.actions}>
+              {!menu.some((plato: Recipe) => plato.id === item.id) ? (
+                <TouchableOpacity
+                  onPress={() => addPlato && addPlato(item)}
+                  style={styles.button}>
+                  <Text style={styles.buttonText}>Agregar receta</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => removePlato && removePlato(item.id)}
+                  style={[styles.button, styles.removeButton]}>
+                  <Text style={styles.buttonText}>Eliminar</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                onPress={() => handleOpenModal(item)}
+                style={styles.button}>
+                <Text style={styles.buttonText}>Ver Detalles</Text>
               </TouchableOpacity>
+            </View>
+          </View>
         )}
-        <TouchableOpacity onPress={() => handleOpenModal(item)} style={styles.button}>
-              <Text style={styles.buttonText}>Ver Detalles</Text>
-            </TouchableOpacity>
-      </View>
+        ListEmptyComponent={<Text style={styles.noResults}>No se encontraron resultados.</Text>}
+      />
 
-      {modalVisible && selectedPlato?.id === item.id && (
+      {/* Modal independiente del listado */}
+      {modalVisible && selectedPlato && (
         <PlatoDetalle
           visible={modalVisible}
           id={selectedPlato.id}
@@ -101,21 +106,6 @@ export default function TabTwoScreen() {
           menu={menu}
         />
       )}
-    </View>
-  )}
-  ListEmptyComponent={<Text style={styles.noResults}>No se encontraron resultados.</Text>}
-/>
-
-
-    
-    ))
-  ) : (
-    <Text style={styles.noResults}>No se encontraron resultados.</Text>
-  )}
-</View>
-
-
-     
     </View>
   );
 }
